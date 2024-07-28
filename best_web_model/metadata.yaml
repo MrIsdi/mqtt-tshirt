@@ -1,0 +1,30 @@
+description: Ultralytics YOLOv8m-cls model trained on /content/WISUDAA-1
+author: Ultralytics
+date: '2024-07-20T05:37:43.109067'
+version: 8.2.60
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 1
+task: classify
+batch: 1
+imgsz:
+- 224
+- 224
+names:
+  0: BROCADE
+  1: CANVAS
+  2: COTTON
+  3: DENIM
+  4: JACQUARD
+  5: JERSEY
+  6: LEATHER
+  7: LINEN
+  8: NYLON
+  9: ORGANZA
+  10: POLYESTER
+  11: RAYON
+  12: SATIN
+  13: SILK
+  14: SPANDEX
+  15: SUEDE
+  16: WOOL

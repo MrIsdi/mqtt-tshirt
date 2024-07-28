@@ -1,0 +1,6 @@
+train: /content/WISUDAA-1/train 
+val: /content/WISUDAA-1/val
+test: /content/WISUDAA-1/test
+
+nc: 17
+names: ['BROCADE','CANVAS','COTTON','DENIM','JACQUARD','JERSEY','LEATHER','LINEN','NYLON','ORGANZA','POLYESTER','RAYON','SATIN','SILK','SPANDEX','SUEDE','WOOL']
