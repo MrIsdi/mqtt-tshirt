@@ -5,10 +5,7 @@ const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/best_web_model', express.static(path.join(__dirname, 'best_web_model')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Setup MQTT client
 const mqttClient = mqtt.connect('mqtt://test.mosquitto.org');
@@ -17,12 +14,8 @@ mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
 });
 
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
 app.post('/send-message', (req, res) => {
-  const topic = "rps_image_classification";
+  const topic = "skin-facial-yolo";
   const message = req.body.message;
 
   mqttClient.publish(topic, message, (err) => {
@@ -38,3 +31,5 @@ app.post('/send-message', (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+
+module.exports = app

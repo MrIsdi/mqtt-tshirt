@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Computer Vision Image Classification using Transfer Learning is an application of the Tensorflow library with a rock paper scissors dataset. The application of the Tensorflow library uses Transfer Learning or readily available models. Then the model results are exported into TensorflowJS. "
+    />
+    <meta name="keywords" content="tensorflow, tensorflowjs, tailwindcss" />
+    <meta name="author" content="Muhammad Ridho Isdi" />
+    <link rel="shortcut icon" href="./assets/logo.svg" type="image/svg" />
+    <title>CV: Image Classification</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  </head>
+  <body>
+    <main
+      class="min-h-screen flex md:flex-row flex-col-reverse md:justify-normal justify-end md:py-0 py-4 bg-[url('./assets/bgn.jpg')] bg-cover"
+    >
+      <div
+        class="md:basis-5/5 basis-full md:flex hidden flex-col justify-center items-center gap-4"
+      >
+        <p class="text-white text-2xl text-center">
+          CV: Gambar Klasifikasi Kulit Wajah Pada Manusia
+        </p>
+        <div
+          class="md:w-[650px] w-[300px] md:h-[490px] h-[225px] p-[5px] border border-[rgba(255,255,255,0.3)] rounded-xl bg-[rgba(255,255,255,0)] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[6.2px]"
+        >
+          <video src="" id="video" width="640" height="480"></video>
+        </div>
+        <div class="md:w-[650px] w-[300px] flex justify-between">
+          <button
+            class="w-[120px] h-[40px] rounded-lg text-white font-bold bg-green-400"
+            id="startVideo"
+          >
+            Start
+          </button>
+          <button
+            class="w-[120px] h-[40px] rounded-lg text-white font-bold bg-red-400"
+            id="stopVideo"
+          >
+            Stop
+          </button>
+        </div>
+      </div>
+      <div
+        class="md:hidden flex flex-col my-4 gap-4 min-h-[320px]"
+        id="component-image"
+      >
+        <p class="text-white text-2xl text-center">
+          CV: Gambar Klasifikasi Kulit Wajah Pada Manusia
+        </p>
+        <div
+          class="flex items-center justify-center relative w-[320px] h-[320px] m-auto backdrop-blur bg-[rgba(255,255,255,0)] shadow-[0_4px_30px_rgba(0, 0, 0, 0.1)] border border-[rgba(255,255,255,0.3)] rounded-2xl"
+        >
+          <img
+            src=""
+            alt="logo"
+            class="hidden rounded-2xl w-[320px] h-[320px]"
+            id="image"
+          />
+          <canvas
+            class="rounded-2xl absolute"
+            width="640"
+            height="640"
+            id="canvas-image"
+            style="width: 320px"
+          >
+          </canvas>
+        </div>
+        <div class="w-[320px] m-auto flex gap-4">
+          <button
+            class="w-1/2 h-10 m-auto flex items-center justify-center gap-2 font-bold text-white bg-cyan-400 rounded-2xl"
+            id="btn-file-image"
+          >
+            <i class="bx bx-upload text-2xl"></i>
+            <span>Upload</span>
+          </button>
+          <button
+            class="w-1/2 h-10 m-auto flex items-center justify-center gap-2 font-bold text-white bg-green-400 rounded-2xl"
+            id="btn-show-image"
+          >
+            <i class="bx bx-show text-2xl"></i>
+            <span>Classify</span>
+          </button>
+        </div>
+        <input
+          type="file"
+          name="image"
+          id="file-image"
+          accept="image/*"
+          class="hidden"
+        />
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const video = document.getElementById("video");
+      const startVideo = document.getElementById("startVideo");
+      const stopVideo = document.getElementById("stopVideo");
+      const label = document.getElementById("label");
+      const score = document.getElementById("score");
+
+      let cam, img;
+
+      startVideo.addEventListener("click", async () => {
+        cam = await tf.data.webcam(video,{facingMode:'environment'});
+        main(cam);
+      });
+
+      stopVideo.addEventListener("click", () => {
+        cam.stop();
+      });
+
+      async function main(cam) {
+        try {
+          const img = await cam.capture();
+          const MODEL_URL = "./best_web_model/model.json";
+          const model = await tf.loadGraphModel(MODEL_URL);
+
+          const timeStart = Date.now();
+          const data = tf.image.resizeBilinear(img, [224, 224]).div(255.0);
+          const input = tf.expandDims(data).toFloat();
+          const outputs = model.execute(input);
+
+          const name = className[tf.argMax(outputs.dataSync()).dataSync()];
+          console.log(className[tf.argMax(outputs.dataSync()).dataSync()]);
+          console.log(tf.max(outputs.dataSync()).dataSync() * 100);
+          const rest = await axios
+            .post("/send-message", { message: name })
+            .then(() => {
+              console.log("apiactive");
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          const timeStop = Date.now();
+          const delay = timeStop - timeStart;
+
+          setTimeout(() => {
+            main(cam);
+          }, delay);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      // File image upload start
+      let btnFileImage = document.getElementById("btn-file-image"),
+        fileImage = document.getElementById("file-image"),
+        btnShowImage = document.getElementById("btn-show-image");
+
+      btnFileImage.onclick = () => {
+        fileImage.click();
+      };
+
+      fileImage.onchange = () => {
+        let file = fileImage.files[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          let img = document.getElementById("image");
+          img.src = e.target.result;
+          img.classList.add("block");
+          img.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+        console.log("image loaded");
+      };
+
+      btnShowImage.onclick = async () => {
+        let img = document.getElementById("image");
+        const MODEL_URL = "./best_web_model/model.json";
+        const model = await tf.loadGraphModel(MODEL_URL);
+        let data = tf.browser.fromPixels(img);
+        let input = tf.image
+          .resizeBilinear(data, [224, 224])
+          .div(255.0)
+          .expandDims();
+        const outputs = model.execute(input);
+
+        const name = className[tf.argMax(outputs.dataSync()).dataSync()];
+        console.log(className[tf.argMax(outputs.dataSync()).dataSync()]);
+        console.log(tf.max(outputs.dataSync()).dataSync() * 100);
+        const rest = await axios
+            .post("/send-message", { message: name })
+            .then(() => {
+              alert("Data terkirim")
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+      };
+      // File image upload end
+
+      const className = ["berminyak", "kering", "normal"];
+    </script>
+  </body>
+</html>
