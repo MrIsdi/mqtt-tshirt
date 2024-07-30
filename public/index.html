@@ -29,8 +29,9 @@
           CV: Gambar Klasifikasi Kulit Wajah Pada Manusia
         </p>
         <div
-          class="md:w-[650px] w-[300px] md:h-[490px] h-[225px] p-[5px] border border-[rgba(255,255,255,0.3)] rounded-xl bg-[rgba(255,255,255,0)] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[6.2px]"
+          class="relative md:w-[650px] w-[300px] md:h-[490px] h-[225px] p-[5px] border border-[rgba(255,255,255,0.3)] rounded-xl bg-[rgba(255,255,255,0)] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[6.2px]"
         >
+          <p class="absolute w-fit h-[40px] rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3" id="name">Tipe Kulit</p>
           <video src="" id="video" width="640" height="480"></video>
         </div>
         <div class="md:w-[650px] w-[300px] flex justify-between">
@@ -72,6 +73,7 @@
             style="width: 320px"
           >
           </canvas>
+          <p class="absolute w-fit h-[40px] top-0 start-0 rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3" id="namePhone">Tipe Kulit</p>
         </div>
         <div class="w-[320px] m-auto flex gap-4">
           <button
@@ -104,8 +106,8 @@
       const video = document.getElementById("video");
       const startVideo = document.getElementById("startVideo");
       const stopVideo = document.getElementById("stopVideo");
-      const label = document.getElementById("label");
-      const score = document.getElementById("score");
+      const label = document.getElementById("name");
+      const labelPhone = document.getElementById("namePhone");
 
       let cam, img;
 
@@ -135,7 +137,7 @@
           const rest = await axios
             .post("/send-message", { message: name })
             .then(() => {
-              console.log("apiactive");
+              label.innerText = `Tipe Kulit: ${name}`;
             })
             .catch((e) => {
               console.log(e);
@@ -191,7 +193,7 @@
         const rest = await axios
             .post("/send-message", { message: name })
             .then(() => {
-              alert("Data terkirim")
+              labelPhone.innerText = `Tipe Kulit: ${name}`;
             })
             .catch((e) => {
               console.log(e);
@@ -199,7 +201,7 @@
       };
       // File image upload end
 
-      const className = ["berminyak", "kering", "normal", "tidak terdeteksi"];
+      const className = ["Berminyak", "Kering", "Normal", "Tidak terdeteksi"];
     </script>
   </body>
 </html>
