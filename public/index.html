@@ -183,6 +183,7 @@
           .div(255.0)
           .expandDims();
         const outputs = model.execute(input);
+        console.log(outputs)
 
         const name = className[tf.argMax(outputs.dataSync()).dataSync()];
         console.log(className[tf.argMax(outputs.dataSync()).dataSync()]);
@@ -198,7 +199,7 @@
       };
       // File image upload end
 
-      const className = ["berminyak", "kering", "normal"];
+      const className = ["berminyak", "kering", "normal", "tidak terdeteksi"];
     </script>
   </body>
 </html>
