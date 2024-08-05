@@ -31,7 +31,8 @@
         <div
           class="relative md:w-[650px] w-[300px] md:h-[490px] h-[225px] p-[5px] border border-[rgba(255,255,255,0.3)] rounded-xl bg-[rgba(255,255,255,0)] shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[6.2px]"
         >
-          <p class="absolute w-fit h-[40px] rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3" id="name">Tipe Kulit</p>
+          <p class="absolute w-fit h-[40px] rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3 start-0" id="name">Tipe Kulit</p>
+          <p class="absolute w-fit h-[40px] rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3 end-0" id="suhu">Suhu</p>
           <video src="" id="video" width="640" height="480"></video>
         </div>
         <div class="md:w-[650px] w-[300px] flex justify-between">
@@ -74,6 +75,7 @@
           >
           </canvas>
           <p class="absolute w-fit h-[40px] top-0 start-0 rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3" id="namePhone">Tipe Kulit</p>
+          <p class="absolute w-fit h-[40px] top-0 rounded-lg text-white font-bold bg-cyan-400 flex items-center px-3 end-0" id="suhuPhone">Suhu</p>
         </div>
         <div class="w-[320px] m-auto flex gap-4">
           <button
@@ -108,6 +110,8 @@
       const stopVideo = document.getElementById("stopVideo");
       const label = document.getElementById("name");
       const labelPhone = document.getElementById("namePhone");
+      const suhu = document.getElementById("suhu");
+      const suhuPhone = document.getElementById("suhuPhone");
 
       let cam, img;
 
@@ -138,6 +142,7 @@
             .post("/send-message", { message: name })
             .then(() => {
               label.innerText = `Tipe Kulit: ${name}`;
+              getSuhu()
             })
             .catch((e) => {
               console.log(e);
@@ -156,7 +161,9 @@
       // File image upload start
       let btnFileImage = document.getElementById("btn-file-image"),
         fileImage = document.getElementById("file-image"),
-        btnShowImage = document.getElementById("btn-show-image");
+        btnShowImage = document.getElementById("btn-show-image"),
+
+        isSuhuPhone = false;
 
       btnFileImage.onclick = () => {
         fileImage.click();
@@ -194,12 +201,25 @@
             .post("/send-message", { message: name })
             .then(() => {
               labelPhone.innerText = `Tipe Kulit: ${name}`;
+              getSuhu()
             })
             .catch((e) => {
               console.log(e);
             });
       };
       // File image upload end
+
+      async function getSuhu() {
+        try {
+          const res = await axios.get("/receive-message")
+          if(className.filter((name)=> name == res.data.data).length == 0){
+            suhu.innerText = `${res.data.data} C`
+            suhuPhone.innerText = `${res.data.data} C`
+          }
+        } catch (error) {
+          console.log(error.message)
+        }
+      }
 
       const className = ["Berminyak", "Kering", "Normal", "Tidak terdeteksi"];
     </script>
