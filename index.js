@@ -12,7 +12,7 @@ const mqttClient = mqtt.connect("mqtt://test.mosquitto.org");
 let mqttData = "";
 
 mqttClient.on("connect", () => {
-  const topic = "skin-facial-yolo";
+  const topic = "skin-facial-yolo-suhu";
   console.log("Connected to MQTT broker");
   mqttClient.subscribe(topic, (err) => {
     if (err) {
